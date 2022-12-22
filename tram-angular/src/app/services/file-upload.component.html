@@ -1,0 +1,23 @@
+<div class="text-center">
+	<input class="form-control" type="file"
+			(change)="onChange($event)">
+
+
+	<button (click)="onUpload()"
+		class="btn btn-success">
+		Upload
+	</button>
+</div>
+
+<div class="container text-center jumbotron" style="color: aliceblue;"
+	*ngIf="loading">
+	<a>LOADING</a>
+</div>
+
+<div class="container text-center jumbotron" style="color: aliceblue;"
+	*ngIf="message">
+	<a>{{message}}</a>
+</div>
+
+
+
