@@ -1,0 +1,6 @@
+kats
+flask
+flask-cors
+pymongo
+dnspython
+python-dotenv

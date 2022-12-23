@@ -5,6 +5,7 @@ from werkzeug.utils import secure_filename
 from flask_cors import CORS
 from pymongo import MongoClient
 from dotenv import load_dotenv
+from pred import forecast
 
 load_dotenv()
 
@@ -25,7 +26,11 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
-def send_message(message):
+def send_message(message, data = None):
+
+    if data:
+
+        return jsonify({'message': message, 'data': data})
 
     return jsonify({'message': message})
 
@@ -43,9 +48,9 @@ def upload_file():
 
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
-            handle_csv(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            data = handle_csv(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
-            return send_message('File uploaded successfully')
+            return send_message('File uploaded successfully', data=data)
 
         return send_message('File not allowed')
 
@@ -60,19 +65,14 @@ def handle_csv(file_name):
 
     df.fillna(0, inplace=True)
 
-    data_dict = df.to_dict("records")
+    forecast_df = forecast(
+        df = df,
+        time_col_name='date',
+        steps=10
+        )
 
-    file_name = file_name.split('/')[-1].split('.')[0]
-
-    coll_name = 'tram-data-' + file_name
-
-    myCollection = db[coll_name]
-
-    myCollection.insert_many(data_dict)
-
-    print(
-        f'File {file_name}.csv uploaded successfully to collection {coll_name} in database {db.name}'
-    )
+    return forecast_df.to_json(orient='records')
+    
 
 
 if __name__ == '__main__':
