@@ -8,11 +8,11 @@ import { FileUploadService } from './file-upload.service';
 })
 export class FileUploadComponent implements OnInit {
 
-	// Variable to store shortLink from api response
 	shortLink: string = "";
 	message: string = "";
 	loading: boolean = false; // Flag variable
 	file!: File; // Variable to store file
+	data: any;
 
 	// Inject service
 	constructor(private fileUploadService: FileUploadService) { }
@@ -34,6 +34,8 @@ export class FileUploadComponent implements OnInit {
 
 					this.message = event.message;
 					this.loading = false; // Flag variable
+					this.data = event.data;
+					console.log(this.data);
 				}
 			}
 		);
